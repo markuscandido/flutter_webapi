@@ -5,11 +5,11 @@ import 'package:flutter_webapi_first_course/services/interceptors/logging_interc
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/http.dart';
 
-class JournalService {
+class TodoService {
   static const int timeoutInSeconds = 30;
   static const String url =
       "https://my-json-server.typicode.com/markuscandido/flutter_webapi_server/";
-  static const String resource = "journals/";
+  static const String resource = "todos/";
 
   http.Client client = InterceptedClient.build(
     interceptors: [
@@ -22,12 +22,6 @@ class JournalService {
 
   String getUrl() {
     return "$url$resource";
-  }
-
-  void register(String content) {
-    client.post(Uri.parse(getUrl()), body: {
-      "id": content,
-    });
   }
 
   Future<String> get() async {
