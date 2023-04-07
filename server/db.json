@@ -41043,16 +41043,28 @@
   ],
   "journals": [
     {
-      "id": "3d2b34f0-d55d-11ed-8836-df04fe65a394",
-      "content": "Markus",
-      "createdAt": "2023-04-07T15:59:55.322365",
-      "updatedAt": "2023-04-07T15:59:55.332367"
+      "id": "453e15d0-d59a-11ed-8175-c7cc06155299",
+      "content": "Hoje é sexta-feira Santa!",
+      "createdAt": "2023-04-07T23:16:25.535206",
+      "updatedAt": "2023-04-07T23:16:48.174026"
     },
     {
-      "id": "51596000-d55d-11ed-8836-df04fe65a394",
-      "content": "Hoje é Sexta-Feira Santa!",
-      "createdAt": "2023-04-07T15:59:55.742884",
-      "updatedAt": "2023-04-07T16:00:29.184341"
+      "id": "71eab340-d59a-11ed-a20c-fd78a61d3966",
+      "content": "Hoje vai ter sopa!",
+      "createdAt": "2023-04-07T23:17:40.722303",
+      "updatedAt": "2023-04-07T23:18:03.126918"
+    },
+    {
+      "id": "8068b8e0-d59a-11ed-a20c-fd78a61d3966",
+      "content": "Ontem foi Quinta!",
+      "createdAt": "2023-04-06T23:17:40.722303",
+      "updatedAt": "2023-04-07T23:18:27.438963"
+    },
+    {
+      "id": "c0053500-d59a-11ed-aced-15ea00ca9c73",
+      "content": "Dia de comer churrasco!",
+      "createdAt": "2023-04-02T23:19:51.686826",
+      "updatedAt": "2023-04-07T23:20:14.161533"
     }
   ]
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webapi_first_course/database/database.dart';
 import 'package:flutter_webapi_first_course/models/journal.dart';
 import 'package:flutter_webapi_first_course/screens/home_screen/widgets/home_screen_list.dart';
+import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,12 +15,13 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime currentDay = DateTime.now();
 
   // Tamanho da lista
-  int windowPage = 10;
+  int windowPage = 7;
 
   // A base de dados mostrada na lista
   Map<String, Journal> database = {};
 
   final ScrollController _listScrollController = ScrollController();
+  final JournalService _service = JournalService();
 
   @override
   void initState() {
@@ -36,10 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(
           "${currentDay.day}  |  ${currentDay.month}  |  ${currentDay.year}",
         ),
+        actions: [
+          IconButton(
+            onPressed: () => refresh(),
+            icon: const Icon(Icons.refresh),
+          )
+        ],
       ),
       body: ListView(
         controller: _listScrollController,
         children: generateListJournalCards(
+          refreshFunc: refresh,
           windowPage: windowPage,
           currentDay: currentDay,
           database: database,
@@ -48,9 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void refresh() {
+  void refresh() async {
+    List<Journal> listJournal = await _service.getAll();
     setState(() {
-      database = generateRandomDatabase(maxGap: windowPage, amount: 1);
+      database = {};
+      for (Journal journal in listJournal) {
+        database[journal.id] = journal;
+      }
     });
   }
 }

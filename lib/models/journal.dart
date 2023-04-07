@@ -21,6 +21,12 @@ class Journal {
     required this.updatedAt,
   });
 
+  Journal.fromApi({required dynamic jsonMap})
+      : id = jsonMap["id"],
+        content = jsonMap["content"],
+        createdAt = DateTime.parse(jsonMap["createdAt"]),
+        updatedAt = DateTime.parse(jsonMap["updatedAt"]);
+
   Map<String, Object?> toMap() {
     return {
       "id": id,

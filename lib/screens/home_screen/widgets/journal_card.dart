@@ -7,7 +7,12 @@ import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_s
 class JournalCard extends StatelessWidget {
   final Journal? journal;
   final DateTime showedDate;
-  const JournalCard({Key? key, this.journal, required this.showedDate})
+  final Function refreshFunc;
+  const JournalCard(
+      {Key? key,
+      this.journal,
+      required this.showedDate,
+      required this.refreshFunc})
       : super(key: key);
 
   @override
@@ -105,6 +110,7 @@ class JournalCard extends StatelessWidget {
         createdAt: showedDate,
       ),
     ).then((value) {
+      refreshFunc();
       if (value != null && value == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
