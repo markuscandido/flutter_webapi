@@ -21,7 +21,7 @@ Map<String, Journal> generateRandomDatabase({
 
     String id = const Uuid().v1();
 
-    map[id] = Journal(
+    map[id] = Journal.fromDatabase(
       id: id,
       content: getRandomPhrase(),
       createdAt: date,

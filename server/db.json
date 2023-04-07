@@ -41041,7 +41041,18 @@
       "completed": false
     }
   ],
-  "journals":[
-
+  "journals": [
+    {
+      "id": "3d2b34f0-d55d-11ed-8836-df04fe65a394",
+      "content": "Markus",
+      "createdAt": "2023-04-07T15:59:55.322365",
+      "updatedAt": "2023-04-07T15:59:55.332367"
+    },
+    {
+      "id": "51596000-d55d-11ed-8836-df04fe65a394",
+      "content": "Hoje é Sexta-Feira Santa!",
+      "createdAt": "2023-04-07T15:59:55.742884",
+      "updatedAt": "2023-04-07T16:00:29.184341"
+    }
   ]
 }

@@ -1,18 +1,37 @@
+import 'dart:convert';
+
+import 'package:uuid/uuid.dart';
+
 class Journal {
-  String id;
+  final String id;
   String content;
-  DateTime createdAt;
+  final DateTime createdAt;
   DateTime updatedAt;
 
-  Journal({
+  Journal.novo({
+    required this.content,
+    required this.createdAt,
+  })  : id = const Uuid().v1(),
+        updatedAt = DateTime.now();
+
+  Journal.fromDatabase({
     required this.id,
     required this.content,
     required this.createdAt,
     required this.updatedAt,
   });
 
+  Map<String, Object?> toMap() {
+    return {
+      "id": id,
+      "content": content,
+      "createdAt": createdAt.toIso8601String(),
+      "updatedAt": updatedAt.toIso8601String(),
+    };
+  }
+
   @override
   String toString() {
-    return "$content \ncreated_at: $createdAt\nupdated_at:$updatedAt";
+    return json.encode(toMap());
   }
 }

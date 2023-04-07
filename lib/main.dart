@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webapi_first_course/helpers/async_study.dart';
-//import 'package:flutter_webapi_first_course/services/journal_service.dart';
+import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen.dart';
+import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen_page_route.dart';
+import 'package:flutter_webapi_first_course/services/dtos/journal_service_register_request.dart';
+import 'package:flutter_webapi_first_course/services/journal_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
-  //JournalService service = JournalService();
-  //service.register("Markus Vinicius Candido");
-  //service.get();
-  asyncStudy();
+  JournalService service = JournalService();
+  service.register(
+    request: RegisterJournalRequest(
+      content: "Markus",
+      createdAt: DateTime.now(),
+    ),
+  );
+  service.get();
+  //asyncStudy();
 }
 
 class MyApp extends StatelessWidget {
@@ -27,15 +34,28 @@ class MyApp extends StatelessWidget {
           titleTextStyle: TextStyle(
             color: Colors.white,
           ),
+          actionsIconTheme: IconThemeData(
+            color: Colors.white,
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.white,
+          ),
         ),
         textTheme: GoogleFonts.robotoTextTheme(),
       ),
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.light,
       //themeMode: ThemeMode.system,
-      initialRoute: "home",
+      initialRoute: 'homeScreen',
       routes: {
-        "home": (context) => const HomeScreen(),
+        'homeScreen': (context) => const HomeScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == AddJournalScreen.routeName) {
+          return launchAddJournalScreen(settings);
+        }
+        assert(false, 'Need to implement ${settings.name}');
+        return null;
       },
     );
   }
