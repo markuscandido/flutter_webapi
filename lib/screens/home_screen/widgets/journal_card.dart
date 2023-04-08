@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webapi_first_course/helpers/weekday.dart';
 import 'package:flutter_webapi_first_course/models/journal.dart';
+import 'package:flutter_webapi_first_course/screens/common/confirmation_dialog.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen_arguments.dart';
+import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class JournalCard extends StatelessWidget {
   final Journal? journal;
   final DateTime showedDate;
   final Function refreshFunc;
-  const JournalCard(
-      {Key? key,
-      this.journal,
-      required this.showedDate,
-      required this.refreshFunc})
-      : super(key: key);
+  const JournalCard({
+    Key? key,
+    this.journal,
+    required this.showedDate,
+    required this.refreshFunc,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     if (journal != null) {
       return InkWell(
-        onTap: () {},
+        onTap: () {
+          callAddJournalScreen(context);
+        },
         child: Container(
           height: 115,
           margin: const EdgeInsets.all(8),
@@ -80,6 +84,9 @@ class JournalCard extends StatelessWidget {
                   ),
                 ),
               ),
+              IconButton(
+                  onPressed: () => removeItem(context),
+                  icon: const Icon(Icons.delete))
             ],
           ),
         ),
@@ -102,16 +109,44 @@ class JournalCard extends StatelessWidget {
     }
   }
 
+  void removeItem(BuildContext context) {
+    if (journal != null) {
+      showConfirmationDialog(context).then((confirm) {
+        if (confirm == null) {
+          return;
+        }
+        if (!confirm) {
+          return;
+        }
+        JournalService().delete(id: journal!.id).then((success) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Removido com sucesso!")));
+            refreshFunc();
+          }
+        });
+      });
+    }
+  }
+
   void callAddJournalScreen(BuildContext context) {
+    Journal innnerJournal = Journal.novo(
+      content: "",
+      createdAt: showedDate,
+    );
+    if (journal != null) {
+      innnerJournal = journal!;
+    }
     Navigator.pushNamed(
       context,
       AddJournalScreen.routeName,
       arguments: AddJournalScreenArguments(
-        createdAt: showedDate,
+        journal: innnerJournal,
+        isEditing: journal != null,
       ),
-    ).then((value) {
+    ).then((success) {
       refreshFunc();
-      if (value != null && value == true) {
+      if (success != null && success == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Registro feito com sucesso!'),

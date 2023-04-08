@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webapi_first_course/helpers/weekday.dart';
+import 'package:flutter_webapi_first_course/models/journal.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen_arguments.dart';
-import 'package:flutter_webapi_first_course/services/dtos/journal_service_register_request.dart';
 import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class AddJournalScreen extends StatelessWidget {
@@ -15,10 +15,11 @@ class AddJournalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _contentController.text = arguments.journal.content;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${WeekDay(arguments.createdAt.weekday).long.toLowerCase()}, ${arguments.createdAt.day} | ${arguments.createdAt.month} | ${arguments.createdAt.year}",
+          "${WeekDay(arguments.journal.createdAt.weekday).long.toLowerCase()}, ${arguments.journal.createdAt.day} | ${arguments.journal.createdAt.month} | ${arguments.journal.createdAt.year}",
         ),
         actions: [
           IconButton(
@@ -42,16 +43,17 @@ class AddJournalScreen extends StatelessWidget {
   }
 
   registerNewJournal(BuildContext context) {
+    Journal journal = arguments.journal;
     String content = _contentController.text;
-    _journalService
-        .register(
-      request: RegisterJournalRequest(
-        content: content,
-        createdAt: arguments.createdAt,
-      ),
-    )
-        .then((success) {
-      Navigator.of(context).pop(success);
-    });
+    journal.content = content;
+    if (arguments.isEditing) {
+      _journalService.put(id: journal.id, entity: journal).then((success) {
+        Navigator.of(context).pop(success);
+      });
+    } else {
+      _journalService.post(entity: journal).then((success) {
+        Navigator.of(context).pop(success);
+      });
+    }
   }
 }
