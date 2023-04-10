@@ -8,8 +8,7 @@ import 'package:flutter_webapi_first_course/services/interceptors/logging_interc
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http/http.dart';
 
-///Classe base para integração com a API (Backend)
-abstract class BaseService<T> {
+abstract class BaseService {
   ///Define o timeout padrão
   static const int _timeoutInSeconds = 30;
 
@@ -17,9 +16,11 @@ abstract class BaseService<T> {
   //static const String url = "https://my-json-server.typicode.com/markuscandido/flutter_webapi_server/";
   static const String _url = "http://192.168.0.108:3000/";
 
-  ///Define o recurso que a classe concreta irá manipular, seguindo o padrão RestFull.
   final String resource;
-  final http.Client _httpClient = InterceptedClient.build(
+
+  BaseService({required this.resource});
+
+  final http.Client httpClient = InterceptedClient.build(
     interceptors: [
       DefaultHeadersInterceptor(),
       LoggingInterceptor(),
@@ -28,9 +29,11 @@ abstract class BaseService<T> {
     retryPolicy: ExpiredTokenRetryPolicy(),
   );
 
-  BaseService({required this.resource});
+  String getUrl() => "$_url$resource/";
+}
 
-  String _getUrl() => "$_url$resource/";
+abstract class BaseCrudService<T> extends BaseService {
+  BaseCrudService({required String resource}) : super(resource: resource);
 
   ///Dado uma entidade, converter para um map
   Map<String, Object?> toMapEntity({required T entity});
@@ -43,7 +46,7 @@ abstract class BaseService<T> {
   }) async {
     String entityJson = json.encode(toMapEntity(entity: entity));
     http.Response response =
-        await _httpClient.post(Uri.parse(_getUrl()), body: entityJson);
+        await httpClient.post(Uri.parse(getUrl()), body: entityJson);
     return response.statusCode == HttpStatus.created;
   }
 
@@ -54,12 +57,12 @@ abstract class BaseService<T> {
     String entityJson = json.encode(toMapEntity(entity: entity));
 
     http.Response response =
-        await _httpClient.put(Uri.parse("${_getUrl()}$id"), body: entityJson);
+        await httpClient.put(Uri.parse("${getUrl()}$id"), body: entityJson);
     return response.statusCode == HttpStatus.ok;
   }
 
   Future<List<T>> getAll() async {
-    http.Response response = await _httpClient.get(Uri.parse(_getUrl()));
+    http.Response response = await httpClient.get(Uri.parse(getUrl()));
     if (kDebugMode) {
       print(response.body);
     }
@@ -80,7 +83,7 @@ abstract class BaseService<T> {
     required String id,
   }) async {
     http.Response response =
-        await _httpClient.delete(Uri.parse("${_getUrl()}$id"));
+        await httpClient.delete(Uri.parse("${getUrl()}$id"));
     return response.statusCode == HttpStatus.ok;
   }
 }

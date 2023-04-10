@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen_page_route.dart';
+import 'package:flutter_webapi_first_course/screens/login_screen/login_screen.dart';
 import 'screens/home_screen/home_screen.dart';
 
 void main() async {
@@ -34,9 +35,10 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       themeMode: ThemeMode.light,
       //themeMode: ThemeMode.system,
-      initialRoute: 'homeScreen',
+      initialRoute: LoginScreen.routeName,
       routes: {
-        'homeScreen': (context) => const HomeScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+        LoginScreen.routeName: (context) => LoginScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == AddJournalScreen.routeName) {

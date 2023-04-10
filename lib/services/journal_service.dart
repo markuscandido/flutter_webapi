@@ -1,7 +1,7 @@
 import 'package:flutter_webapi_first_course/models/journal.dart';
-import 'package:flutter_webapi_first_course/services/base_service.dart';
+import 'package:flutter_webapi_first_course/services/base_crud_service.dart';
 
-class JournalService extends BaseService<Journal> {
+class JournalService extends BaseCrudService<Journal> {
   JournalService() : super(resource: "journals");
 
   @override
