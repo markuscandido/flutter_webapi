@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webapi_first_course/helpers/weekday.dart';
 import 'package:flutter_webapi_first_course/models/journal.dart';
+import 'package:flutter_webapi_first_course/screens/common/exception_dialog.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen_arguments.dart';
+import 'package:flutter_webapi_first_course/services/exceptions/api_base_exception.dart';
 import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class AddJournalScreen extends StatelessWidget {
@@ -47,12 +49,17 @@ class AddJournalScreen extends StatelessWidget {
     String content = _contentController.text;
     journal.content = content;
     if (arguments.isEditing) {
+      journal.updatedAt = DateTime.now();
       _journalService.put(id: journal.id, entity: journal).then((success) {
         Navigator.of(context).pop(success);
+      }).onError<ApiBaseException>((error, stackTrace) {
+        showExceptionDialog(context, content: error.message);
       });
     } else {
       _journalService.post(entity: journal).then((success) {
         Navigator.of(context).pop(success);
+      }).onError<ApiBaseException>((error, stackTrace) {
+        showExceptionDialog(context, content: error.message);
       });
     }
   }

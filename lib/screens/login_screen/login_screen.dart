@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webapi_first_course/helpers/share_preferences_util.dart';
 import 'package:flutter_webapi_first_course/screens/common/confirmation_dialog.dart';
+import 'package:flutter_webapi_first_course/screens/common/exception_dialog.dart';
 import 'package:flutter_webapi_first_course/screens/home_screen/home_screen.dart';
 import 'package:flutter_webapi_first_course/services/auth/exceptions/user_not_found_exception.dart';
-import 'package:flutter_webapi_first_course/services/auth_service.dart';
+import 'package:flutter_webapi_first_course/services/auth/auth_service.dart';
+import 'package:flutter_webapi_first_course/services/exceptions/api_base_exception.dart';
 
 class LoginScreen extends StatelessWidget {
   static const routeName = 'loginScreen';
@@ -76,13 +78,9 @@ class LoginScreen extends StatelessWidget {
   _login(BuildContext context) async {
     String email = _emailController.text;
     String password = _passwdController.text;
-    try {
-      bool successLogin =
-          await _authService.login(email: email, password: password);
-      if (successLogin && context.mounted) {
-        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
-      }
-    } on UserNotFoundException {
+    _authService.login(email: email, password: password).then((successLogin) {
+      Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+    }).onError<UserNotFoundException>((ex, stackTrace) {
       showConfirmationDialog(
         context,
         content: "O e-mail $email não existe. Deseja cadastrar?",
@@ -99,6 +97,8 @@ class LoginScreen extends StatelessWidget {
           }
         },
       );
-    }
+    }).onError<ApiBaseException>((ex, stackTrace) {
+      showExceptionDialog(context, content: ex.message);
+    });
   }
 }

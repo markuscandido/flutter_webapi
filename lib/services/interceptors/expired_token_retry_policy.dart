@@ -12,6 +12,8 @@ class ExpiredTokenRetryPolicy extends RetryPolicy {
   @override
   Future<bool> shouldAttemptRetryOnResponse(ResponseData response) async {
     if (response.statusCode == HttpStatus.unauthorized) {
+      //SharedPrefsUtils.setLogout();
+      //RefreshToken >> loggin >> ...
       locator<NavigationService>().navigateTo(LoginScreen.routeName);
       return false;
     }

@@ -7,7 +7,7 @@ class SharedPrefsUtils {
   static const String _dateLastAccessToken = "date_last_access_token";
   static const String _userId = "user_id";
   static const String _userEmail = "user_email";
-  static const int _expiredAccessTokenMinutes = 5;
+  static const int _expiredAccessTokenMinutes = 90;
 
   static late final SharedPreferences _instance;
 

@@ -3,8 +3,10 @@ import 'package:flutter_webapi_first_course/helpers/share_preferences_util.dart'
 import 'package:flutter_webapi_first_course/helpers/weekday.dart';
 import 'package:flutter_webapi_first_course/models/journal.dart';
 import 'package:flutter_webapi_first_course/screens/common/confirmation_dialog.dart';
+import 'package:flutter_webapi_first_course/screens/common/exception_dialog.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen.dart';
 import 'package:flutter_webapi_first_course/screens/journal_screen/add_journal_screen_arguments.dart';
+import 'package:flutter_webapi_first_course/services/exceptions/api_base_exception.dart';
 import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class JournalCard extends StatelessWidget {
@@ -125,6 +127,8 @@ class JournalCard extends StatelessWidget {
                 const SnackBar(content: Text("Removido com sucesso!")));
             refreshFunc();
           }
+        }).onError<ApiBaseException>((error, stackTrace) {
+          showExceptionDialog(context, content: error.message);
         });
       });
     }

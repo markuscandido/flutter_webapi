@@ -1,4 +1,5 @@
-import '../../../models/journal.dart';
+import 'package:flutter_webapi_first_course/models/journal.dart';
+
 import 'journal_card.dart';
 
 List<JournalCard> generateListJournalCards({

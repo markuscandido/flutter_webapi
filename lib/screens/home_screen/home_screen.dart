@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webapi_first_course/helpers/logout.dart';
 import 'package:flutter_webapi_first_course/helpers/share_preferences_util.dart';
 import 'package:flutter_webapi_first_course/models/journal.dart';
-import 'package:flutter_webapi_first_course/screens/common/confirmation_dialog.dart';
+import 'package:flutter_webapi_first_course/screens/common/exception_dialog.dart';
 import 'package:flutter_webapi_first_course/screens/home_screen/widgets/home_screen_list.dart';
-import 'package:flutter_webapi_first_course/screens/login_screen/login_screen.dart';
+import 'package:flutter_webapi_first_course/services/exceptions/api_base_exception.dart';
 import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime currentDay = DateTime.now();
 
   // Tamanho da lista
-  int windowPage = 7;
+  int windowPage = 6;
 
   // A base de dados mostrada na lista
   Map<String, Journal> database = {};
@@ -52,8 +53,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           children: [
             ListTile(
+              title: Text(SharedPrefsUtils.getLogin().user.email),
+              leading: const Icon(Icons.person),
+            ),
+            ListTile(
               onTap: () {
-                _logout();
+                logout(context);
               },
               title: const Text("Sair"),
               leading: const Icon(Icons.logout),
@@ -74,27 +79,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void refresh() async {
-    List<Journal> listJournal = await _service.getAll();
-    setState(() {
-      database = {};
-      for (Journal journal in listJournal) {
-        database[journal.id] = journal;
-      }
-    });
-  }
-
-  void _logout() {
-    showConfirmationDialog(
-      context,
-      title: "Sair",
-      content: "Deseja mesmo sair?",
-      affirmativeActionTitle: "Sair",
-    ).then((confirm) {
-      if (confirm == null || confirm == false) {
-        return;
-      }
-      SharedPrefsUtils.setLogout();
-      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+    _service.getAll().then((listJournal) {
+      setState(() {
+        database = {};
+        for (Journal journal in listJournal) {
+          database[journal.id] = journal;
+        }
+      });
+    }).onError<ApiBaseException>((error, stackTrace) {
+      showExceptionDialog(context, content: error.message);
     });
   }
 }
