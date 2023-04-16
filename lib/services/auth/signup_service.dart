@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter_webapi_first_course/models/auth/login_response.dart';
 import 'package:flutter_webapi_first_course/services/auth/exceptions/email_already_exists_exception.dart';
+import 'package:flutter_webapi_first_course/services/base_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_webapi_first_course/models/auth/signup.dart';
-import 'package:flutter_webapi_first_course/services/base_crud_service.dart';
 
 class SignupService extends BaseService {
-  SignupService() : super(resource: "signup");
+  SignupService() : super(resource: "signup", addAuthorization: false);
 
   Future<LoginResponse> post(Signup signup) async {
     String entityJson = json.encode(signup.toJsonMap());

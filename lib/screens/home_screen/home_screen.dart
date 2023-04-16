@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webapi_first_course/helpers/share_preferences_util.dart';
 import 'package:flutter_webapi_first_course/models/journal.dart';
+import 'package:flutter_webapi_first_course/screens/common/confirmation_dialog.dart';
 import 'package:flutter_webapi_first_course/screens/home_screen/widgets/home_screen_list.dart';
+import 'package:flutter_webapi_first_course/screens/login_screen/login_screen.dart';
 import 'package:flutter_webapi_first_course/services/journal_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -45,6 +48,19 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              onTap: () {
+                _logout();
+              },
+              title: const Text("Sair"),
+              leading: const Icon(Icons.logout),
+            ),
+          ],
+        ),
+      ),
       body: ListView(
         controller: _listScrollController,
         children: generateListJournalCards(
@@ -64,6 +80,21 @@ class _HomeScreenState extends State<HomeScreen> {
       for (Journal journal in listJournal) {
         database[journal.id] = journal;
       }
+    });
+  }
+
+  void _logout() {
+    showConfirmationDialog(
+      context,
+      title: "Sair",
+      content: "Deseja mesmo sair?",
+      affirmativeActionTitle: "Sair",
+    ).then((confirm) {
+      if (confirm == null || confirm == false) {
+        return;
+      }
+      SharedPrefsUtils.setLogout();
+      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
     });
   }
 }

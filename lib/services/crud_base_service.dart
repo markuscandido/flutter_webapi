@@ -2,38 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_webapi_first_course/services/interceptors/default_headers_interceptor.dart';
-import 'package:flutter_webapi_first_course/services/interceptors/expired_token_retry_policy.dart';
-import 'package:flutter_webapi_first_course/services/interceptors/logging_interceptor.dart';
+import 'package:flutter_webapi_first_course/helpers/share_preferences_util.dart';
+import 'package:flutter_webapi_first_course/services/base_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_interceptor/http/http.dart';
-
-abstract class BaseService {
-  ///Define o timeout padrão
-  static const int _timeoutInSeconds = 30;
-
-  ///Define qual a url base do gateway
-  //static const String url = "https://my-json-server.typicode.com/markuscandido/flutter_webapi_server/";
-  static const String _url = "http://192.168.0.108:3000/";
-
-  final String resource;
-
-  BaseService({required this.resource});
-
-  final http.Client httpClient = InterceptedClient.build(
-    interceptors: [
-      DefaultHeadersInterceptor(),
-      LoggingInterceptor(),
-    ],
-    requestTimeout: const Duration(seconds: _timeoutInSeconds),
-    retryPolicy: ExpiredTokenRetryPolicy(),
-  );
-
-  String getUrl() => "$_url$resource/";
-}
 
 abstract class BaseCrudService<T> extends BaseService {
-  BaseCrudService({required String resource}) : super(resource: resource);
+  final String resource;
+  BaseCrudService({required this.resource})
+      : super(
+          resource: "users/${SharedPrefsUtils.getLogin().user.id}/$resource",
+        );
 
   ///Dado uma entidade, converter para um map
   Map<String, Object?> toMapEntity({required T entity});
@@ -79,11 +57,13 @@ abstract class BaseCrudService<T> extends BaseService {
     return list;
   }
 
+  ///Para o Delete, não é aplicado o padrão de /users/GUID/resource.
+  ///É /resource/id
   Future<bool> delete({
     required String id,
   }) async {
     http.Response response =
-        await httpClient.delete(Uri.parse("${getUrl()}$id"));
+        await httpClient.delete(Uri.parse("$baseUrl$resource/$id"));
     return response.statusCode == HttpStatus.ok;
   }
 }

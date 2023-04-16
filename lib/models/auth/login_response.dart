@@ -6,13 +6,16 @@ class LoginResponse {
 
   LoginResponse({
     required this.accessToken,
-    required String id,
-    required String email,
-  }) : user = User(id: id, email: email);
+    required this.user,
+  });
 
   LoginResponse.fromJsonMap(Map<String, dynamic> jsonMap)
       : accessToken = jsonMap["accessToken"],
         user = User.fromJsonMap(
           jsonMap: jsonMap["user"],
         );
+
+  bool hasAccessToken() {
+    return accessToken.isNotEmpty;
+  }
 }

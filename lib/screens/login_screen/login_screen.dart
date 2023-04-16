@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_webapi_first_course/helpers/share_preferences_util.dart';
 import 'package:flutter_webapi_first_course/screens/common/confirmation_dialog.dart';
+import 'package:flutter_webapi_first_course/screens/home_screen/home_screen.dart';
 import 'package:flutter_webapi_first_course/services/auth/exceptions/user_not_found_exception.dart';
 import 'package:flutter_webapi_first_course/services/auth_service.dart';
 
@@ -7,9 +9,8 @@ class LoginScreen extends StatelessWidget {
   static const routeName = 'loginScreen';
 
   final TextEditingController _emailController =
-      TextEditingController(text: "markus.candido@gmail.com");
-  final TextEditingController _passwdController =
-      TextEditingController(text: "51cf12471C");
+      TextEditingController(text: SharedPrefsUtils.getLogin().user.email);
+  final TextEditingController _passwdController = TextEditingController();
 
   final AuthService _authService = AuthService();
 
@@ -56,19 +57,13 @@ class LoginScreen extends StatelessWidget {
                     controller: _passwdController,
                     decoration: const InputDecoration(label: Text("Senha")),
                     keyboardType: TextInputType.visiblePassword,
-                    validator: (value) {
-                      if (value == null) return null;
-                      if (value.isEmpty) return "campo obrigatório";
-                      if (value.length < 10) return "min 10 caracteres";
-                      if (value.length > 18) return "max 18 caracteres";
-                      return null;
-                    },
                     maxLength: 18,
                     obscureText: true,
                   ),
                   ElevatedButton(
-                      onPressed: () => _login(context),
-                      child: const Text("Continuar")),
+                    onPressed: () => _login(context),
+                    child: const Text("Continuar"),
+                  ),
                 ],
               ),
             ),
@@ -82,7 +77,11 @@ class LoginScreen extends StatelessWidget {
     String email = _emailController.text;
     String password = _passwdController.text;
     try {
-      await _authService.login(email: email, password: password);
+      bool successLogin =
+          await _authService.login(email: email, password: password);
+      if (successLogin && context.mounted) {
+        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+      }
     } on UserNotFoundException {
       showConfirmationDialog(
         context,
@@ -90,7 +89,13 @@ class LoginScreen extends StatelessWidget {
       ).then(
         (value) {
           if (value != null && value) {
-            _authService.register(email: email, password: password);
+            _authService
+                .register(email: email, password: password)
+                .then((successRegister) {
+              if (successRegister) {
+                Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+              }
+            });
           }
         },
       );
